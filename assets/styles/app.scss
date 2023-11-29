@@ -1,0 +1,18 @@
+@import "~bootstrap/scss/bootstrap";
+
+$primary-color: #A15EA2;
+$secondary-color: #D9D9D9;
+$third-color: #C29ACD;
+
+
+body {
+        background-color: $primary-color;
+        color: $secondary-color;
+      }
+
+      #logo {
+        width: 50px; 
+  height: auto;
+      }
+
+
