@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\SeasonRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -14,18 +16,42 @@ class Season
     #[ORM\Column]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'seasons')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Program $program = null;
+
     #[ORM\Column]
     private ?int $number = null;
 
-    #[ORM\Column]
+    #[ORM\Column(nullable: true)]
     private ?int $year = null;
 
-    #[ORM\Column(type: Types::TEXT)]
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $description = null;
+
+    #[ORM\OneToMany(mappedBy: 'season', targetEntity: Episode::class)]
+    private Collection $episodes;
+
+    public function __construct()
+    {
+        $this->episodes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getProgram(): ?Program
+    {
+        return $this->program;
+    }
+
+    public function setProgram(?Program $program): static
+    {
+        $this->program = $program;
+
+        return $this;
     }
 
     public function getNumber(): ?int
@@ -45,7 +71,7 @@ class Season
         return $this->year;
     }
 
-    public function setYear(int $year): static
+    public function setYear(?int $year): static
     {
         $this->year = $year;
 
@@ -57,9 +83,39 @@ class Season
         return $this->description;
     }
 
-    public function setDescription(string $description): static
+    public function setDescription(?string $description): static
     {
         $this->description = $description;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Episode>
+     */
+    public function getEpisodes(): Collection
+    {
+        return $this->episodes;
+    }
+
+    public function addEpisode(Episode $episode): static
+    {
+        if (!$this->episodes->contains($episode)) {
+            $this->episodes->add($episode);
+            $episode->setSeason($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpisode(Episode $episode): static
+    {
+        if ($this->episodes->removeElement($episode)) {
+            // set the owning side to null (unless already changed)
+            if ($episode->getSeason() === $this) {
+                $episode->setSeason(null);
+            }
+        }
 
         return $this;
     }
