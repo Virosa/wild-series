@@ -59,4 +59,9 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
           CategoryFixtures::class,
         ];
     }
+
+    static function getTitles(): array
+    {
+        return array_map(fn ($arr) => $arr['title'], self::PROGRAM);
+    }
 }

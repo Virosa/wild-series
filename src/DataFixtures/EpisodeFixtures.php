@@ -8,11 +8,12 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Episode;
+use Faker\Factory;
 ;
 
 class EpisodeFixtures extends Fixture implements DependentFixtureInterface
 {
-    public const EPISODE =[
+   /* public const EPISODE =[
     [
         'program'=> 'Breaking Bad',
         'season' => 1,
@@ -52,21 +53,23 @@ class EpisodeFixtures extends Fixture implements DependentFixtureInterface
         'synopsis' =>'Walt rejects everyone who tries to help him with the cancer. 
         Jesse tries his best to create Walt\'s meth, with the help of an old 
         friend.'],
-    ];
+    ];*/
     
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
-        foreach (self::EPISODE as $episodeNumber){
-        $episode = new Episode();
-        $episode->setTitle($episodeNumber['title']);
-        $episode->setNumber($episodeNumber['number']);
-        $episode->setSeason($this->getReference('program_'. $episodeNumber['program'].'season_' . $episodeNumber['season']));
-        $episode->setSynopsis($episodeNumber['synopsis']);
-           
- 
-        $manager->persist($episode);
-
-    }
+        $faker = Factory::create('fr_FR');
+        foreach(ProgramFixtures::getTitles() as $program) {
+            for($seasonNumber = 1; $seasonNumber < 6; $seasonNumber++){
+                for($episodeNumber = 1; $episodeNumber < 11; $episodeNumber++){
+                    $episode = new Episode();
+                    $episode->setNumber($episodeNumber);
+                    $episode->setTitle($faker->realText($faker->numberBetween(10, 45)));
+                    $episode->setSynopsis($faker->realText());
+                    $episode->setSeason($this->getReference('program_' . $program . 'season_' . $seasonNumber));
+                    $manager->persist($episode);
+                }
+            }
+        }
         $manager->flush();
    
     }
