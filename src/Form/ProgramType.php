@@ -4,6 +4,7 @@ namespace App\Form;
 
 
 use App\Entity\Program;
+use App\Entity\Category;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,7 +24,7 @@ class ProgramType extends AbstractType
             ->add('poster', TextType::class)
             ->add('country', TextType::class)
             ->add('year', IntegerType::class)
-            ->add('category', EntityType::class, ['class' => Entity::class, 'choice_label' => 'name']);
+            ->add('category', EntityType::class, ['class' => Category::class, 'choice_label' => 'name']);
         
     }
 
