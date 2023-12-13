@@ -33,6 +33,13 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     'year' => 2002,
     'category' =>'Action'],
 
+    ['title' => 'Senfield', 
+    'synopsis' => 'Les aventures de Jerry et ses amis new-yorkais.', 
+    'country' => 'Etats Unis',
+    'year' => 1989,
+    'category' =>'Action'],
+
+
     ];
     
     public function load(ObjectManager $manager)
