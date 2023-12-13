@@ -11,6 +11,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use App\Entity\Actor;
+
 
 
 class ProgramType extends AbstractType
@@ -25,7 +27,13 @@ class ProgramType extends AbstractType
             ->add('country', TextType::class)
             ->add('year', IntegerType::class)
             ->add('category', EntityType::class, ['class' => Category::class, 'choice_label' => 'name']);
-        
+            $builder->add('actors', EntityType::class, [
+                'class' => Actor::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+                'expanded' => true,
+                'by_reference' => false,
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
