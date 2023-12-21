@@ -6,10 +6,16 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Program;
+use Symfony\Component\String\Slugger\SluggerInterface;
 ;
 
 class ProgramFixtures extends Fixture implements DependentFixtureInterface
 {
+    private SluggerInterface $slugger;
+    public function __construct(SluggerInterface $slugger) {
+        $this->slugger = $slugger;
+    }
+    
     public const PROGRAM =[
     ['title' => 'Breaking Bad', 
     'synopsis' => 'Un professeur de chimie de lycée chez qui 
@@ -52,6 +58,8 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
         $newProgram->setYear($program['year']);
         $newProgram->setCategory($this->getReference('category_' . $program['category']));
         //$this->addReference('program_'. $program['title'], $program); 
+        $slug = $this->slugger->slug($newProgram->getTitle());
+        $newProgram->setSlug($slug);
         $manager->persist($newProgram);
         $this->addReference('program_' . $program['title'], $newProgram);    
     }

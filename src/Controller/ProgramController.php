@@ -14,6 +14,8 @@ use Symfony\Bridge\Doctrine\Attribute\MapEntity;
 use App\Form\ProgramType;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use App\Service\ProgramDuration;
 
 
 #[Route('/program', name: 'program_')]
@@ -32,7 +34,7 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/new', name: 'new')]
-    public function new(Request $request, EntityManagerInterface $entityManager) : Response
+    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger) : Response
         {
        
         $program = new Program();
@@ -40,8 +42,10 @@ class ProgramController extends AbstractController
         $form->handleRequest($request);
 
             if ($form->isSubmitted() && $form->isValid()) {
-              $entityManager->persist($program);
-              $entityManager->flush();
+                $slug = $slugger->slug($program->getTitle());
+                $program->setSlug($slug);
+                $entityManager->persist($program);
+                $entityManager->flush();
 
               $this->addFlash('success', 'The new program has been edited');
               return $this->redirectToRoute('program_index');
@@ -53,10 +57,14 @@ class ProgramController extends AbstractController
         }
 
     //#[Route('/show/{id<^[0-9]+$>}', name: 'show')]
-    #[Route('/program/{id}/', name: 'show')]
+    #[Route('/program/{slug}/', name: 'show', methods: ['GET'])]
     //public function show(int $id, ProgramRepository $programRepository):Response
-    public function show(Program $program): Response
+    public function show(Program $program, SluggerInterface $slugger, ProgramDuration $programDuration): Response
     {
+        $slug = $slugger->slug($program->getTitle());
+        $program->setSlug($slug);
+
+        $duration = $programDuration->calculate($program);
     /*{
         //$program = $programRepository->findOneBy(['id' => $id]);
         //$program = $programRepository->find($id);
@@ -67,7 +75,8 @@ class ProgramController extends AbstractController
             );
         }*/
         return $this->render('program/show.html.twig', [
-            'program' => $program,  
+            'program' => $program, 
+            'duration' => $duration,
         ]);
     }
 
@@ -94,22 +103,28 @@ class ProgramController extends AbstractController
                 'season' => $season,
             ]);*/
         
-            #[Route("/program/{program}/season/{season}", name:'season_show')]
-            public function showProgramSeason(Program $program, Season $season): Response
+            #[Route("/program/{slug}/season/{season}", name:'season_show')]
+            public function showProgramSeason ( Program $program, Season $season, SluggerInterface $slugger): Response
             {
-            return $this->render('program/season_show.html.twig', [
+            
+                $slug = $slugger->slug($program->getTitle());
+                $program->setSlug($slug);
+                return $this->render('program/season_show.html.twig', [
                 'program' => $program,
                 'season' => $season,
             ]);
             }
 
             #[Route("/program/{programId}/season/{seasonId}/episode/{episodeId}", name: 'episode_show', methods: ['GET'])]
-            public function showEpisode(
+            public function showEpisode( SluggerInterface $slugger,
                 //Program $program, Season $season, Episode $episode): Response
                 #[MapEntity(mapping: ['programId' => 'id'])] Program $program,
                 #[MapEntity(mapping: ['seasonId' => 'id'])] Season $season,
                 #[MapEntity(mapping: ['episodeId' => 'id'])] Episode $episode,): Response
             {
+
+                $slug = $slugger->slug($program->getTitle());
+                $program->setSlug($slug);
               return $this->render('program/episode_show.html.twig', [
                 'program' => $program,
                 'season' => $season,
