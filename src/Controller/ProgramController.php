@@ -16,6 +16,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use App\Service\ProgramDuration;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 
 
 #[Route('/program', name: 'program_')]
@@ -34,7 +37,8 @@ class ProgramController extends AbstractController
     }
 
     #[Route('/new', name: 'new')]
-    public function new(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger) : Response
+    public function new(Request $request, MailerInterface $mailer,
+    EntityManagerInterface $entityManager, SluggerInterface $slugger) : Response
         {
        
         $program = new Program();
@@ -46,6 +50,17 @@ class ProgramController extends AbstractController
                 $program->setSlug($slug);
                 $entityManager->persist($program);
                 $entityManager->flush();
+
+                $email = (new Email())
+                ->from($this->getParameter('mailer_from'))
+                ->to('your_email@example.com')
+                ->subject('Une nouvelle série vient d\'être publiée !')
+                ->html($this->renderView('Program/newProgramEmail.html.twig', [
+                'program' => $program
+                ]
+            ));
+
+                $mailer->send($email);
 
               $this->addFlash('success', 'The new program has been edited');
               return $this->redirectToRoute('program_index');
