@@ -4,12 +4,23 @@
 
 {% block body %}
     <div>
-        
+        <div class="card-header">
             <h1>{{ program.title }}</h1>
             <p>{{ program.synopsis }}</p>
+        </div>
 
             <p>Catégorie : {{ program.category.name }}</p>
 
+        <div class="card-body">
+            {% if program.updatedAt is null %}
+                <img class="card-img-top" src="{{ program.poster }}" alt="poster de {{ program.title }}">
+            {% else %}
+                <img class="card-img-top" src="{{ vich_uploader_asset(program) }}" alt="{{ program.title }}">
+            {% endif %}
+
+        <div class="card-footer text-muted">
+            {{ program.country }} - {{ program.year }}
+        </div>
             <h2> Saisons disponibles : <h2>
            
            <ul> 
