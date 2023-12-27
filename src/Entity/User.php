@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,6 +28,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'relation', targetEntity: Comment::class)]
+    private Collection $episode;
+
+    public function __construct()
+    {
+        $this->episode = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -95,5 +105,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Comment>
+     */
+    public function getEpisode(): Collection
+    {
+        return $this->episode;
+    }
+
+    public function addEpisode(Comment $episode): static
+    {
+        if (!$this->episode->contains($episode)) {
+            $this->episode->add($episode);
+            $episode->setAuhor($this);
+        }
+
+        return $this;
+    }
+
+    public function removeEpisode(Comment $episode): static
+    {
+        if ($this->episode->removeElement($episode)) {
+            // set the owning side to null (unless already changed)
+            if ($episode->getAuthor() === $this) {
+                $episode->setAuthor(null);
+            }
+        }
+
+        return $this;
     }
 }

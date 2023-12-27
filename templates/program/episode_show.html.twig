@@ -13,5 +13,27 @@
     <a href="{{ path('program_show', {'slug': program.slug}) }}">
         Retour au programme
     </a>
-        
+
+    <div id="comments">
+        <h2>Commentaires</h2>
+        <ul>
+            {% for comment in comments %}
+                <li>
+                    {{ comment.comment }} - {{ comment.rate }} - {{ comment.author.id }} - {{ comment.createdAt | date('Y-m-d H:i:s') }}
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    {# Afficher le formulaire de commentaire si l'utilisateur est connecté #}
+    {% if commentForm %}
+        <div id="comment-form">
+            <h2>Ajouter un commentaire</h2>
+            {{ form_start(commentForm) }}
+            {{ form_row(commentForm.rate) }}
+            {{ form_row(commentForm.comment) }}
+            <button type="submit">Envoyer</button>
+            {{ form_end(commentForm) }}
+        </div>
+    {% endif %}
 {% endblock %}
