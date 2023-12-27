@@ -64,7 +64,7 @@ class ActorController extends AbstractController
 
         return $this->render('actor/edit.html.twig', [
             'actor' => $actor,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 

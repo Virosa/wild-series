@@ -4,7 +4,8 @@
  <h1>New Episode {{ episode.title }} created</h1>
     <p>Hello, the new episode E.{{ episode.number }} {{ episode.title }} has been created on Wild Series for Season {{ episode.season.number }} for the Program {{ episode.season.program.title }}</p>
     <p>Synopsis : {{episode.synopsis }}</p>
-    <p> <a href="{{ path('program_show') }}">
+    <p> <a href="{{ path('app_episode_index') }}">
+
             Wild Series
         </a> </p>
 

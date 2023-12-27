@@ -26,10 +26,21 @@
       <li class="nav-item">
         <a class="nav-link" href="/episode">Episodes</a>
       </li>
+      {#  <li class="nav-item">
+        <a class="nav-link" href="/login">Connexion</a>
+      </li>
+      #}
       <li class="nav-item">
-        <a class="nav-link" href="#">Connexion</a>
+        <a class="nav-link" href="/logout">Déconnexion</a>
       </li>
     </ul>
+
+    {% if app.user %}
+      {{ app.user.email }}
+      <a href="{{ path('app_logout') }}"> Se déconnecter</a>
+    {% else %}
+      <a href="{{ path('app_login') }}"> Se connecter</a>
+    {% endif %}
   </div>
 
 </nav>

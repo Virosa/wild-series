@@ -147,12 +147,14 @@ class ProgramController extends AbstractController
               ]);  
             }
 
-            //[Route('/all', name: 'index', methods: ['GET'])]
-           // public function indexAdmin(ProgramRepository $programRepository): Response
-           // {
-             //   return $this->render('program/indexAll.html.twig', [
-             //       'programs' => $programRepository->findAll(),
-              //  ]);
+            //#[Route('/all', name: 'index', methods: ['GET'])]
+            #[Route('/all', name: 'program_index_all', methods: ['GET'])]
+            public function indexAllAdmin(ProgramRepository $programRepository): Response
+           {
+               return $this->render('program/indexAllProgram.html.twig', [
+                   'programs' => $programRepository->findAll(),
+               ]);
+           }
     }
 
 

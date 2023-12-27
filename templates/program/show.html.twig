@@ -44,7 +44,17 @@
             <li>Aucun acteur pour cette série</li>
         {% endfor %}
     </ul>
-    
+
+   {#  <div class="card-body">
+        {% if actor.updatedAt is null %}
+            <img class="card-img-top" src="{{ actor.poster }}" alt="poster de {{ actor.title }}">
+        {% else %}
+            <img class="card-img-top" src="{{ vich_uploader_asset(actor) }}" alt="{{ actor.name }}">
+        {% endif %}
+        <a href="{{ path('app_actor_index') }}">
+            Retour à la liste des acteurs
+        </a>
+    </div>#}
     <a href="{{ path('program_index') }}">
         Retour à la liste des programmes
     </a>
