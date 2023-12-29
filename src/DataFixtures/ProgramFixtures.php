@@ -6,6 +6,9 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use App\Entity\Program;
+use App\Entity\User;
+use App\DataFixtures\UserFixtures;
+
 use Symfony\Component\String\Slugger\SluggerInterface;
 ;
 
@@ -20,14 +23,14 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     ['title' => 'Breaking Bad', 
     'synopsis' => 'Un professeur de chimie de lycée chez qui 
     on a diagnostiqué un cancer du poumon inopérable se tourne vers la fabrication et la 
-    vente de méthamphétamine pour assurer l\'avenir de sa famille.', 
-    'country' => 'Etats Unis',
+    vente de méthamphétamine pour assurer l\'avenir de sa famille.',
+        'country' => 'Etats Unis',
     'year' => 2009,
     'category' =>'Action'],
 
     ['title' => 'Kingdom', 
     'synopsis' => 'Un prince héritier est envoyé en mission suicide 
-    pour enquêter sur une mystérieuse épidémie.', 
+    pour enquêter sur une mystérieuse épidémie.',
     'country' => 'Corée du Sud',
     'year' => 2019,
     'category' =>'Action'],
@@ -50,20 +53,33 @@ class ProgramFixtures extends Fixture implements DependentFixtureInterface
     
     public function load(ObjectManager $manager)
     {
+        $contributor = $this->getReference('contributor@monsite.com');
+
+
         foreach (self::PROGRAM as $program){
-        $newProgram = new Program();
-        $newProgram->setTitle($program['title']);
-        $newProgram->setSynopsis($program['synopsis']);
-        $newProgram->setCountry($program['country']);
-        $newProgram->setYear($program['year']);
-        $newProgram->setCategory($this->getReference('category_' . $program['category']));
-        //$this->addReference('program_'. $program['title'], $program); 
-        $slug = $this->slugger->slug($newProgram->getTitle());
-        $newProgram->setSlug($slug);
-        $manager->persist($newProgram);
-        $this->addReference('program_' . $program['title'], $newProgram);    
+
+            $newProgram = new Program();
+            $newProgram->setTitle($program['title']);
+            $newProgram->setSynopsis($program['synopsis']);
+            $newProgram->setCountry($program['country']);
+            $newProgram->setYear($program['year']);
+            $newProgram->setCategory($this->getReference('category_' . $program['category']));
+            //$this->addReference('program_'. $program['title'], $program);
+
+            // Utilisation du SluggerInterface pour générer un slug à partir du titre
+            $slug = $this->slugger->slug($newProgram->getTitle());
+            $newProgram->setSlug($slug);
+
+            // Associez l'utilisateur en tant que propriétaire du programme
+
+            $newProgram->setOwner($contributor);
+
+
+            $manager->persist($newProgram);
+            $this->addReference('program_' . $program['title'], $newProgram);
+
     }
-        $manager->flush();
+            $manager->flush();
    
     }
     

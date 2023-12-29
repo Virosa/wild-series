@@ -30,6 +30,9 @@ class UserFixtures extends Fixture
         $contributor->setPassword($hashedPassword);
         $manager->persist($contributor);
 
+        // Ajout d'une référence pour le contributeur
+        $this->addReference('contributor@monsite.com', $contributor);
+
         // Création d’un utilisateur de type “administrateur”
         $admin = new User();
         $admin->setEmail('admin@monsite.com');
@@ -40,6 +43,10 @@ class UserFixtures extends Fixture
         );
         $admin->setPassword($hashedPassword);
         $manager->persist($admin);
+
+        // Ajout d'une référence pour l'administrateur
+
+        $this->addReference('admin@monsite.com', $admin);
 
         // Sauvegarde des 2 nouveaux utilisateurs :
         $manager->flush();

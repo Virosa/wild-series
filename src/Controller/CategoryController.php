@@ -1,5 +1,5 @@
 <?php
-// src/Controller/ProgramController.php
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -11,6 +11,7 @@ use App\Form\CategoryType;
 use App\Entity\Category;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 #[Route('/category', name: 'category_')]
 class CategoryController extends AbstractController
@@ -28,6 +29,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/new', name: 'new')]
+    #[IsGranted('ROLE_ADMIN')]
     public function new(Request $request, EntityManagerInterface $entityManager) : Response
         {
         // Create a new Category Object
@@ -39,7 +41,7 @@ class CategoryController extends AbstractController
         // Was the form submitted ?
         if ($form->isSubmitted()) {
             // Deal with the submitted data
-            // For example : persiste & flush the entity
+            // persiste & flush the entity
 
             if ($form->isSubmitted() && $form->isValid()) {
               $entityManager->persist($category);

@@ -9,7 +9,7 @@
             <p>{{ program.synopsis }}</p>
         </div>
 
-            <p>Catégorie : {{ program.category.name }}</p>
+            <h2> Catégorie : {{ program.category.name }}</h2>
 
         <div class="card-body">
             {% if program.updatedAt is null %}
@@ -21,7 +21,7 @@
         <div class="card-footer text-muted">
             {{ program.country }} - {{ program.year }}
         </div>
-            <h2> Saisons disponibles : <h2>
+            <h3> Saisons disponibles : </h3>
            
            <ul> 
             {% for season in program.seasons %}
@@ -55,6 +55,12 @@
             Retour à la liste des acteurs
         </a>
     </div>#}
+    <div>
+        {% if is_granted("ROLE_ADMIN") %}
+            <a href="{{ path('program_edit', { 'slug': program.slug} ) }}">Éditer</a>
+        {%endif%}
+    </div>
+
     <a href="{{ path('program_index') }}">
         Retour à la liste des programmes
     </a>
