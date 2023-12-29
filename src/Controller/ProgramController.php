@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\SeasonRepository;
+use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -78,25 +79,28 @@ class ProgramController extends AbstractController
             ]);
         }
 
-    #[Route('/slug/edit', name: 'edit', methods: ['GET', 'POST'])]
-    public function edit(string $slug, Request $request, Program $program, ProgramRepository $programRepository, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    #[Route('/{slug}/edit', name: 'edit', methods: ['GET', 'POST'])]
+    public function edit(Request $request, Program $program, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
-        $program = $this->programRepository->findOneBy(['slug' => $slug]);
         // Ajoute la vérification de propriété du programme
-            if ($this->getUser() !== $program->getOwner()) {
-                throw $this->createAccessDeniedException('Seul le propriétaire peut modifier la série !');
-            }
+        //if ($this->isGranted('ROLE_ADMIN') || $program->getOwner() === $this->getUser())
+            if (!$this->isGranted('ROLE_ADMIN') && $program->getOwner() !== $this->getUser()) {
+                throw $this->createAccessDeniedException('Seul l\'auteur du programme peut le modifier !');
+            //if ($this->getUser() !== $program->getOwner());
+                }
             $form = $this->createForm(ProgramType::class, $program);
             $form->handleRequest($request);
 
-            if ($form->isSubmitted() && $form->isValid()) {
-                $entityManager->flush();
+            if ($form->isSubmitted() && $form->isValid())
+                {
+                    $slug = $slugger->slug($program->getTitle());
+                    $program->setSlug($slug);
+                    $entityManager->flush();
+                    // Message Flash de succès
+                    $this->addFlash('success', 'le programme est mis à jour');
 
-                // Message Flash de succès
-                $this->addFlash('success', 'Bravo ! La série a été éditée avec succès.');
-
-                return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
-            }
+                    return $this->redirectToRoute('program_index', [], Response::HTTP_SEE_OTHER);
+                }
 
             return $this->render('program/edit.html.twig', [
                 'program' => $program,
@@ -228,15 +232,13 @@ class ProgramController extends AbstractController
             }
         }
 
-        return $this->redirectToRoute('program_episode_show', [
-            'programId' => $comment->getEpisode()->getSeason()->getProgram()->getId(),
-            'seasonId' => $comment->getEpisode()->getSeason()->getId(),
-            'episodeId' => $comment->getEpisode()->getId(),
-            'comment' => $comment->getId()
-        ]);
+            return $this->redirectToRoute('program_episode_show', [
+                'programId' => $comment->getEpisode()->getSeason()->getProgram()->getId(),
+                'seasonId' => $comment->getEpisode()->getSeason()->getId(),
+                'episodeId' => $comment->getEpisode()->getId(),
+                'comment' => $comment->getId()
+            ]);
     }
-
-
 
             //#[Route('/all', name: 'index', methods: ['GET'])]
             #[Route('/all', name: 'program_index_all', methods: ['GET'])]
