@@ -4,13 +4,24 @@
 
 {% block body %}
     <div>
-        
+        <div class="card-header">
             <h1>{{ program.title }}</h1>
             <p>{{ program.synopsis }}</p>
+        </div>
 
-            <p>Catégorie : {{ program.category.name }}</p>
+            <h2> Catégorie : {{ program.category.name }}</h2>
 
-            <h2> Saisons disponibles : <h2>
+        <div class="card-body">
+            {% if program.updatedAt is null %}
+                <img class="card-img-top" src="{{ program.poster }}" alt="poster de {{ program.title }}">
+            {% else %}
+                <img class="card-img-top" src="{{ vich_uploader_asset(program) }}" alt="{{ program.title }}">
+            {% endif %}
+
+        <div class="card-footer text-muted">
+            {{ program.country }} - {{ program.year }}
+        </div>
+            <h3> Saisons disponibles : </h3>
            
            <ul> 
             {% for season in program.seasons %}
@@ -33,7 +44,23 @@
             <li>Aucun acteur pour cette série</li>
         {% endfor %}
     </ul>
-    
+
+   {#  <div class="card-body">
+        {% if actor.updatedAt is null %}
+            <img class="card-img-top" src="{{ actor.poster }}" alt="poster de {{ actor.title }}">
+        {% else %}
+            <img class="card-img-top" src="{{ vich_uploader_asset(actor) }}" alt="{{ actor.name }}">
+        {% endif %}
+        <a href="{{ path('app_actor_index') }}">
+            Retour à la liste des acteurs
+        </a>
+    </div>#}
+    <div>
+        {% if is_granted("ROLE_ADMIN") or (is_granted("ROLE_CONTRIBUTOR") and program.owner == app.user) %}
+            <a href="{{ path('program_edit', { 'slug': program.slug} ) }}">Éditer</a>
+        {%endif%}
+    </div>
+
     <a href="{{ path('program_index') }}">
         Retour à la liste des programmes
     </a>

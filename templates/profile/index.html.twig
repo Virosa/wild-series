@@ -1,0 +1,20 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon profil{% endblock %}
+
+{% block body %}
+    <h1>Mon profil</h1>
+    <p>{{ app.user.email }}</p>
+    <h2>Mes séries</h2>
+    <ul>
+        {% for program in app.user.programs %}
+            <li><a href="{{ path('program_show', {slug: program.slug}) }}">{{ program.title }}</a></li>
+        {% endfor %}
+    </ul>
+
+    <div>
+        <p>
+            <a href="{{ path('app_logout') }}">se déconnecter</a>
+        </p>
+    </div>
+{% endblock %}

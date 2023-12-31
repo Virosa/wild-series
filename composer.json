@@ -25,8 +25,9 @@
         "symfony/intl": "6.3.*",
         "symfony/mailer": "6.3.*",
         "symfony/mime": "6.3.*",
-        "symfony/monolog-bundle": "^3.0",
+        "symfony/monolog-bundle": "^3.10",
         "symfony/notifier": "6.3.*",
+        "symfony/password-hasher": "6.3.*",
         "symfony/process": "6.3.*",
         "symfony/property-access": "6.3.*",
         "symfony/property-info": "6.3.*",
@@ -40,8 +41,10 @@
         "symfony/web-link": "6.3.*",
         "symfony/webpack-encore-bundle": "^2.1",
         "symfony/yaml": "6.3.*",
+        "symfonycasts/verify-email-bundle": "*",
         "twig/extra-bundle": "^2.12|^3.0",
-        "twig/twig": "^2.12|^3.0"
+        "twig/twig": "^2.12|^3.0",
+        "vich/uploader-bundle": "^2.3"
     },
     "config": {
         "allow-plugins": {
@@ -97,7 +100,7 @@
         "symfony/browser-kit": "6.3.*",
         "symfony/css-selector": "6.3.*",
         "symfony/debug-bundle": "6.3.*",
-        "symfony/maker-bundle": "^1.0",
+        "symfony/maker-bundle": "*",
         "symfony/phpunit-bridge": "^6.3",
         "symfony/stopwatch": "6.3.*",
         "symfony/web-profiler-bundle": "6.3.*"

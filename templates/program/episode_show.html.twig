@@ -13,5 +13,38 @@
     <a href="{{ path('program_show', {'slug': program.slug}) }}">
         Retour au programme
     </a>
-        
+    {# Afficher le formulaire de commentaire si l'utilisateur est connecté #}
+    {% if commentForm %}
+        <div id="comment-form">
+            <h2>Ajouter un commentaire</h2>
+            {{ form_start(commentForm) }}
+            {{ form_row(commentForm.rate) }}
+            {{ form_row(commentForm.comment) }}
+            <button type="submit">Envoyer</button>
+            {{ form_end(commentForm) }}
+        </div>
+    {% endif %}
+    <div id="comments">
+        <h2>Commentaires</h2>
+        <ul>
+            {% for comment in comments %}
+                <div>
+                    <li>
+                        {{ comment.comment }}
+                        La note donnée : {{ comment.rate }}
+                        L'identifiant de l'auteur : {{ comment.author.id }}
+                        Date de création : {{ comment.createdAt | date('Y-m-d H:i:s') }}
+
+                        {# Afficher le bouton Supprimer le commentaire si l'utilisateur est autorisé #}
+                        {% if app.user and (is_granted('ROLE_ADMIN') or comment.author == app.user) %}
+                            <form method="post" action="{{ path('program_comment_delete', {'id': comment.id}) }}" class="delete-form">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ comment.id) }}">
+                                <button type="submit" class="btn btn-danger">Supprimer le commentaire</button>
+                            </form>
+                        {% endif %}
+                    </li>
+                </div>
+            {% endfor %}
+        </ul>
+    </div>
 {% endblock %}
