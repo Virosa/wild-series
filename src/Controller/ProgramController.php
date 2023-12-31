@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\SearchProgramType;
 use App\Repository\SeasonRepository;
 use Doctrine\ORM\EntityManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -30,13 +31,24 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 class ProgramController extends AbstractController
 {
     #[Route('/', name: 'index')]
-    public function index(ProgramRepository $programRepository): Response
+    public function index(ProgramRepository $programRepository, Request $request): Response
     {
-        $programs = $programRepository->findAll();
+        $form = $this->createForm(SearchProgramType::class);
+        $form->handleRequest($request);
+
+            if ($form->isSubmitted() && $form->isValid()) {
+                $search = $form->getData() ['search'];
+                $programs = $programRepository->findLikeName($search);
+        } else {
+                $programs = $programRepository->findAll();
+                // Utilisez la méthode findRecentPrograms ici lorsque le formulaire n'est pas soumis.
+                //$programs = $programRepository->findRecentPrograms();
+            }
         return $this->render(
             'program/index.html.twig',
             [
                 'programs' => $programs,
+                'form' => $form->createView(),
             ]);
 
     }
