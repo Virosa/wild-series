@@ -18,13 +18,15 @@
             {% include '_navbar.html.twig' %}
         {% endblock %}
     </header>
-    <body>
+    <body {{ stimulus_controller('theme') }}{{ stimulus_target('theme', 'body') }}>
+            <button {{ stimulus_action('theme', 'toggleDarkMode') }} >Toggle dark mode</button>
+    </div>
                {% for category, messages in app.flashes %}
-    {% for message in messages %}
-        <div class="alert alert-{{ category }}">
-            {{ message }}
-        </div>
-    {% endfor %}
+                    {% for message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
 {% endfor %}
         {% block body %}
 
